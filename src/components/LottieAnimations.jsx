@@ -15,7 +15,7 @@ const LottieAnimation = ({ animationData, height = 200, width = 200, loop = true
 
 // JSON Animations (use `process.env.PUBLIC_URL` for public folder paths in React)
 import default1 from '../assets/lotties/female_def.json';
-import default2 from '../assets/Lotties/male_def.json';
+import default2 from '../assets/lotties/male_def.json';
 import default3 from '../assets/lotties/subuser_female.json';
 import default4 from '../assets/lotties/subuser_male.json';
 

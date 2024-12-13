@@ -1,4 +1,5 @@
-import { LottiePlayer1, LottiePlayer2, LottiePlayer3, LottiePlayer4 } from "./LottieAnimations";
+import {LottiePlayer1, LottiePlayer2, LottiePlayer3, LottiePlayer4 } from "./LottieAnimations";
+import React from "react";
 
 export const WeDifferent = () => {
 
