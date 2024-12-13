@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Reset default browser styles */
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Disable horizontal scrolling */
+  }
+  /* Fixed background image for the entire app */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('./assets/pattern-randomized.svg'); /* Your background image */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1; /* Keeps it behind all other content */
+    pointer-events: none; /* Prevent interaction with the background */
+  }
+  
+  /* App container */
+  .app-container {
+    position: relative;
+    overflow-y: auto; /* Enable scrolling for the content */
+    height: 100vh; /* Ensure it covers the full viewport height */
+  }
+  
