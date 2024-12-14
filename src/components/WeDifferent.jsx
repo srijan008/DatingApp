@@ -1,4 +1,4 @@
-import {LottiePlayer3, LottiePlayer2, LottiePlayer1} from "./LottieAnimations";
+import {LottiePlayer3, LottiePlayer2, LottiePlayer1, LottiePlayer4} from "./LottieAnimations";
 import React from "react";
 
 export const WeDifferent = () => {
@@ -18,7 +18,7 @@ export const WeDifferent = () => {
                     <LottiePlayer1 />
                     <LottiePlayer2 />
                     <LottiePlayer3 />
-                    {/* <LottiePlayer4 /> */}
+                    <LottiePlayer4 />
                 </div>
             </div>
 
