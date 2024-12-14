@@ -105,7 +105,7 @@ const AnimeJsExample = () => {
   }, []);
   return (
     <>
-      <div className="absolute animation-wrapper">
+      <div className="absolute  animation-wrapper">
         <div className="sphere-animation">
           <svg
             className="sphere"
@@ -149,8 +149,8 @@ const AnimeJsExample = () => {
             <path d="M109.698 109.332c-24.408 24.407-51.12 37.268-59.663 28.726-8.542-8.543 4.319-35.255 28.727-59.662 24.407-24.408 51.12-37.27 59.662-28.727 8.543 8.543-4.319 35.255-28.726 59.663z" />
           </svg>
         </div>
-        <div>
-          <img src={logo} alt="" className="z-10 w-[600px] relative ml-[30%] pt-[50%]" />
+        <div className="z-10 relative flex justify-center items-center">
+          <img src={logo} alt="" className=" w-[500px] pt-[12%]" />
         </div>
       </div>
     </>
