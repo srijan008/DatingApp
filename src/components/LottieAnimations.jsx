@@ -13,12 +13,12 @@ const LottieAnimation = ({ animationData, height = 200, width = 200, loop = true
     );
 };
 
-// import default1 from '../assets/lotties/female_def.json';
-import default2 from '../assets/lotties/male_def.json';
-// import default3 from '../assets/lotties/subuser_female.json';
-import default4 from '../assets/lotties/subuser_male.json';
+import default1 from '../assets/female_def.json';
+import default2 from '../assets/male_def.json';
+import default3 from '../assets/subuser_female.json';
+// import default4 from '../assets/lotties/subuser_male.json';
 
-// Reusable Components with Specific Animations
+// // Reusable Components with Specific Animations
 export const LottiePlayer1 = () => (
     <LottieAnimation height={300} width={300} animationData={default1} />
 );
@@ -31,8 +31,8 @@ export const LottiePlayer3 = () => (
     <LottieAnimation height={300} width={300} animationData={default3} />
 );
 
-export const LottiePlayer4 = () => (
-    <LottieAnimation height={300} width={300} animationData={default4} />
-);
+// export const LottiePlayer4 = () => (
+//     <LottieAnimation height={300} width={300} animationData={default4} />
+// );
 
 export default LottieAnimation;
