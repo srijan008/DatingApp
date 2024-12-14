@@ -1,4 +1,4 @@
-// import {LottiePlayer1, LottiePlayer2, LottiePlayer3, LottiePlayer4 } from "./LottieAnimations";
+import {LottiePlayer1, LottiePlayer2, LottiePlayer3, LottiePlayer4 } from "./LottieAnimations";
 import React from "react";
 
 export const WeDifferent = () => {
@@ -15,10 +15,10 @@ export const WeDifferent = () => {
                     
                 </div>
                 <div className="flex">
-                    {/* <LottiePlayer1 />
+                    {/* <LottiePlayer1 /> */}
                     <LottiePlayer2 />
-                    <LottiePlayer3 />
-                    <LottiePlayer4 /> */}
+                    {/* <LottiePlayer3 /> */}
+                    <LottiePlayer4 />
                 </div>
             </div>
 
