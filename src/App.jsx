@@ -6,6 +6,7 @@ import { Testimonials } from './components/Testimonials';
 import { PhotoGallery } from './components/PhotoGallery';
 import { Blog } from './components/Blog';
 import { Footer } from './components/Footer';
+import AnimeJsExample from './components/AnimeJSExample';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Header />
       <Heading />
       <WeDifferent />
+      <AnimeJsExample />
       <Testimonials />
       <PhotoGallery />
       <Blog />
