@@ -37,7 +37,7 @@ export const Header = () => {
       >
         <div className="flex items-center text-lg ">
         <img src={heart} alt="heart" className=" ml-5 z-0 w-[60px] inline" />
-          <div className="flex m font-bold text-4xl mr-5 justify-center">
+          <div className="flex m text-[#F47C20] font-bold text-4xl mr-5 justify-center">
             famly.in
             </div>
           <div className="m-4 hover:text-orange-500 hover:underline cursor-pointer">Products</div>

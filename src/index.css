@@ -32,3 +32,56 @@ body {
     height: 100vh; /* Ensure it covers the full viewport height */
   }
   
+
+
+/* Keyframes for moving images upwards */
+@keyframes moveUp {
+  0% {
+      transform: translateY(200%); /* Start below the container */
+  }
+  100% {
+      transform: translateY(-200%); /* Move completely out of the container */
+  }
+}
+
+/* Keyframes for moving images downwards */
+@keyframes moveDown {
+  0% {
+      transform: translateY(-200%); /* Start above the container */
+  }
+  100% {
+      transform: translateY(200%); /* Move completely out of the container */
+  }
+}
+
+/* Container for the moving images */
+.moving-images-container {
+  position: relative;
+  height: 300%; /* Enough space for images to scroll continuously */
+  width: 100%;
+}
+
+/* Moving images (upward movement) */
+.movingup-image {
+  position: absolute;
+  transform: translateX(-50%) skewX(20deg); /* Center the image & counter parent skew */
+  width: 100%; /* Adjust as needed */
+  height: auto;
+  animation: moveUp 20s linear infinite; /* Loop upwards with 6s duration */
+  animation-delay: calc(var(--image-index) * 10s); /* Delay for image staggering */
+}
+
+/* Moving images (downward movement) */
+.movingdown-image {
+  position: absolute;
+  transform: translateX(-50%) skewX(20deg); /* Center the image & counter parent skew */
+  width: 100%; /* Adjust as needed */
+  height: auto;
+  animation: moveDown 20s linear infinite; /* Loop downwards with 6s duration */
+  animation-delay: calc(var(--image-index) * 10s); /* Delay for image staggering */
+}
+
+/* Add small gaps between images */
+.moving-images-container img + img {
+  margin-top: 1rem; /* Adjust the gap between images */
+}
