@@ -94,7 +94,7 @@ export const MainBox = () => {
     return (
         <div className="relative w-[90%] mx-auto mt-[100px] rounded-[50px] h-[80%] border-8 border-orange-400 overflow-hidden">
             {/* Text content */}
-            <div className="absolute z-10 flex flex-col justify-center items-center text-center w-full h-full text-white p-4">
+            <div className="absolute z-10 flex flex-col justify-center items-center text-center w-full h-full text-black p-4">
                 <div className="font-bold text-8xl mb-3">
                     Start Of Something New
                 </div>
