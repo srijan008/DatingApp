@@ -1,5 +1,10 @@
 import React from 'react';
 import '../index.css';
+import test1 from '../images/test1.jpeg'
+import test2 from '../images/test2.jpeg'
+import test3 from '../images/test3.jpeg'
+
+const images = [test1, test2, test3]
 
 const RotatedImageSlider = () => {
   return (
@@ -14,19 +19,19 @@ const RotatedImageSlider = () => {
             }`}
           >
             {/* Repeated images for seamless effect */}
-            {Array.from({ length: 6 }).map((_, imgIndex) => (
+            {Array.from({ length: 3 }).map((_, imgIndex) => (
               <img
                 key={imgIndex}
-                src={`https://via.placeholder.com/200x300?text=Image+${imgIndex + 1}`}
+                src={images[imgIndex]}
                 alt={`image-${imgIndex}`}
                 className="slider-image"
               />
             ))}
             {/* Duplicate images for seamless loop */}
-            {Array.from({ length: 6 }).map((_, imgIndex) => (
+            {Array.from({ length: 3 }).map((_, imgIndex) => (
               <img
                 key={`duplicate-${imgIndex}`}
-                src={`https://via.placeholder.com/200x300?text=Image+${imgIndex + 1}`}
+                src={images[imgIndex]}
                 alt={`image-${imgIndex}`}
                 className="slider-image"
               />
