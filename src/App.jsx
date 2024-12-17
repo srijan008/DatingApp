@@ -1,6 +1,6 @@
 import './index.css';
 import { Header } from './components/Header';
-import { Heading } from './components/Headings';
+import { MainBox } from './components/Headings';
 import { WeDifferent } from './components/WeDifferent';
 import { Testimonials } from './components/Testimonials';
 import { PhotoGallery } from './components/PhotoGallery';
@@ -11,7 +11,7 @@ function App() {
   return (
     <div className="app-container">
       <Header />
-      <Heading />
+      <MainBox />
       <WeDifferent />
       <Testimonials />
       <PhotoGallery />

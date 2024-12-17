@@ -37,51 +37,51 @@ body {
 /* Keyframes for moving images upwards */
 @keyframes moveUp {
   0% {
-      transform: translateY(200%); /* Start below the container */
+    transform: translateY(200%) skewX(20deg); /* Start below the container and counter parent skew */
   }
   100% {
-      transform: translateY(-200%); /* Move completely out of the container */
+    transform: translateY(-200%) skewX(20deg); /* Move completely out of the container while countering skew */
   }
 }
 
 /* Keyframes for moving images downwards */
 @keyframes moveDown {
   0% {
-      transform: translateY(-200%); /* Start above the container */
+    transform: translateY(-400%) skewX(20deg); /* Start above the container and counter parent skew */
   }
   100% {
-      transform: translateY(200%); /* Move completely out of the container */
+    transform: translateY(400%) skewX(20deg); /* Move completely out of the container while countering skew */
   }
 }
 
 /* Container for the moving images */
 .moving-images-container {
-  position: relative;
-  height: 300%; /* Enough space for images to scroll continuously */
-  width: 100%;
+  height: 100%; /* Match the height of the parent container */
+  width: 900px; /* Full width of the parent */
+  overflow: hidden; /* Ensure smooth overflow animation */
 }
 
 /* Moving images (upward movement) */
 .movingup-image {
   position: absolute;
-  transform: translateX(-50%) skewX(20deg); /* Center the image & counter parent skew */
   width: 100%; /* Adjust as needed */
   height: auto;
-  animation: moveUp 20s linear infinite; /* Loop upwards with 6s duration */
-  animation-delay: calc(var(--image-index) * 10s); /* Delay for image staggering */
+  animation: moveUp 10s linear infinite; /* Smooth continuous upward animation */
+  animation-delay: calc(var(--image-index) * 4s); /* Delay for staggered animations */
+  transform: skewX(20deg); /* Ensure the skew is consistently applied */
 }
 
 /* Moving images (downward movement) */
 .movingdown-image {
   position: absolute;
-  transform: translateX(-50%) skewX(20deg); /* Center the image & counter parent skew */
-  width: 100%; /* Adjust as needed */
+  width: 400vw; /* Adjust as needed */
   height: auto;
-  animation: moveDown 20s linear infinite; /* Loop downwards with 6s duration */
-  animation-delay: calc(var(--image-index) * 10s); /* Delay for image staggering */
+  animation: moveDown 10s linear infinite; /* Smooth continuous downward animation */
+  animation-delay: calc(var(--image-index) * 4s); /* Delay for staggered animations */
+  transform: skewX(20deg); /* Ensure the skew is consistently applied */
 }
 
-/* Add small gaps between images */
+/* Add vertical gap between images */
 .moving-images-container img + img {
-  margin-top: 1rem; /* Adjust the gap between images */
+  margin-top: 1rem; /* Slight gap between images */
 }

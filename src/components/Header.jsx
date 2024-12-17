@@ -64,7 +64,7 @@ export const Header = () => {
       </div>
 
       {/* First screen reference div */}
-      <div ref={firstScreenRef} className="h-[20%] w-full">
+      <div ref={firstScreenRef} className=" w-full">
         {/* Empty div to measure visibility */}
       </div>
     </>
