@@ -8,7 +8,7 @@ const images = [test1, test2, test3]
 
 const RotatedImageSlider = () => {
   return (
-    <div className="slider-container mt-[-30px] p-[14px]">
+    <div className="slider-container mt-[-30px] p-[14px] bg-black/40">
       {/* Render 5-6 rotated divs */}
       {Array.from({ length: 6 }).map((_, index) => (
         <div key={index} className="rotated-div">
@@ -47,9 +47,9 @@ export default RotatedImageSlider;
 
 export const MainBox = () => {
     return (
-        <div className="relative w-[90%] mx-auto mt-[100px] rounded-[50px] h-[80%] border-8 border-orange-400 overflow-hidden">
+        <div className="relative w-[90%] mx-auto mt-[100px] rounded-[50px] h-[80%] border-4 border-orange-400 overflow-hidden">
             {/* Text content */}
-            <div className="absolute z-10 flex flex-col justify-center items-center text-center w-full h-full text-black p-4">
+            <div className="absolute z-10 bg-black/50 flex flex-col justify-center items-center text-center w-full h-full text-white p-4">
                 <div className="font-bold text-8xl mb-3">
                     Start Of Something New
                 </div>

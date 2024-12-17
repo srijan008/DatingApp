@@ -38,8 +38,7 @@ body {
 .slider-container {
   display: flex;
   justify-content: space-around; /* Space divs evenly */
-  height: 100vh; /* Full height of the screen */
-  background-color: transparent;   /* Dark background for visuals */
+  height: 100vh; /* Full height of the screen */ 
   overflow: hidden;
 }
 
