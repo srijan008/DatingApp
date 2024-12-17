@@ -3,7 +3,7 @@ import '../index.css';
 
 const RotatedImageSlider = () => {
   return (
-    <div className="slider-container">
+    <div className="slider-container mt-[-30px]">
       {/* Render 5-6 rotated divs */}
       {Array.from({ length: 6 }).map((_, index) => (
         <div key={index} className="rotated-div">
@@ -37,9 +37,7 @@ const RotatedImageSlider = () => {
     </div>
   );
 };
-
 export default RotatedImageSlider;
-
 
 
 export const MainBox = () => {
