@@ -12,6 +12,7 @@ function App() {
     <div className="app-container">
       <Header />
       <MainBox />
+      {/* <RotatedImageSlider /> */}
       <WeDifferent />
       <Testimonials />
       <PhotoGallery />

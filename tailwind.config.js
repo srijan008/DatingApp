@@ -1,12 +1,16 @@
+/** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,jsx,ts,tsx}",
-  ],
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
-      backgroundImage: {
-        "hero-pattern": "url('https://source.unsplash.com/1600x900/?nature,water')",
+      animation: {
+        "vertical-slide": "slide 15s linear infinite",
+      },
+      keyframes: {
+        slide: {
+          "0%": { transform: "translateY(0)" },
+          "100%": { transform: "translateY(-100%)" },
+        },
       },
     },
   },

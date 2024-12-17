@@ -34,54 +34,65 @@ body {
   
 
 
-/* Keyframes for moving images upwards */
-@keyframes moveUp {
+/* Full-page container */
+.slider-container {
+  display: flex;
+  justify-content: space-around; /* Space divs evenly */
+  height: 100vh; /* Full height of the screen */
+  background-color: transparent;   /* Dark background for visuals */
+  overflow: hidden;
+}
+
+/* Rotated Div */
+.rotated-div {
+  position: relative;
+  width: 210px; /* Fixed width for each div */
+  height: 90vh; /* 70% of the viewport height */
+
+  overflow: hidden; /* Hide overflowing images */
+  transform: rotate(10deg); /* Rotate each div */
+  border: 2px solid #333; /* Optional: border for visibility */
+  background-color: #222; /* Slightly different background for contrast */
+}
+
+/* Image Slider */
+.image-slider {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Slider Image */
+.slider-image {
+  width: 100%; /* Fill the div horizontally */
+  margin-bottom: 10px; /* Space between images */
+}
+
+/* Animation for odd-numbered divs (images go up) */
+.slide-up {
+  animation: slide-up 20s linear infinite;
+}
+
+/* Animation for even-numbered divs (images go down) */
+.slide-down {
+  animation: slide-down 20s linear infinite;
+}
+
+/* Keyframes for sliding UP */
+@keyframes slide-up {
   0% {
-    transform: translateY(200%) skewX(20deg); /* Start below the container and counter parent skew */
+    transform: translateY(0); /* Start position */
   }
   100% {
-    transform: translateY(-200%) skewX(20deg); /* Move completely out of the container while countering skew */
+    transform: translateY(-50%); /* Move up by 100% of the slider */
   }
 }
 
-/* Keyframes for moving images downwards */
-@keyframes moveDown {
+/* Keyframes for sliding DOWN */
+@keyframes slide-down {
   0% {
-    transform: translateY(-400%) skewX(20deg); /* Start above the container and counter parent skew */
+    transform: translateY(-50%); /* Start from bottom */
   }
   100% {
-    transform: translateY(400%) skewX(20deg); /* Move completely out of the container while countering skew */
+    transform: translateY(0); /* Move down to original position */
   }
-}
-
-/* Container for the moving images */
-.moving-images-container {
-  height: 100%; /* Match the height of the parent container */
-  width: 900px; /* Full width of the parent */
-  overflow: hidden; /* Ensure smooth overflow animation */
-}
-
-/* Moving images (upward movement) */
-.movingup-image {
-  position: absolute;
-  width: 100%; /* Adjust as needed */
-  height: auto;
-  animation: moveUp 10s linear infinite; /* Smooth continuous upward animation */
-  animation-delay: calc(var(--image-index) * 4s); /* Delay for staggered animations */
-  transform: skewX(20deg); /* Ensure the skew is consistently applied */
-}
-
-/* Moving images (downward movement) */
-.movingdown-image {
-  position: absolute;
-  width: 400vw; /* Adjust as needed */
-  height: auto;
-  animation: moveDown 10s linear infinite; /* Smooth continuous downward animation */
-  animation-delay: calc(var(--image-index) * 4s); /* Delay for staggered animations */
-  transform: skewX(20deg); /* Ensure the skew is consistently applied */
-}
-
-/* Add vertical gap between images */
-.moving-images-container img + img {
-  margin-top: 1rem; /* Slight gap between images */
 }
