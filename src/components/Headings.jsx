@@ -8,7 +8,7 @@ const images = [test1, test2, test3]
 
 const RotatedImageSlider = () => {
   return (
-    <div className="slider-container mt-[-30px]">
+    <div className="slider-container mt-[-30px] p-[14px]">
       {/* Render 5-6 rotated divs */}
       {Array.from({ length: 6 }).map((_, index) => (
         <div key={index} className="rotated-div">
