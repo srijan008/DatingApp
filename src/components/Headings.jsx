@@ -8,7 +8,7 @@ const images = [test1, test2, test3]
 
 const RotatedImageSlider = () => {
   return (
-    <div className="slider-container mt-[-30px] p-[14px] bg-black/40">
+    <div className="slider-container mt-[-65px] flex items-center ml-[-10px] p-[0px] lg:p-[30px] bg-black/40">
       {/* Render 5-6 rotated divs */}
       {Array.from({ length: 6 }).map((_, index) => (
         <div key={index} className="rotated-div">
@@ -33,7 +33,7 @@ const RotatedImageSlider = () => {
                 key={`duplicate-${imgIndex}`}
                 src={images[imgIndex]}
                 alt={`image-${imgIndex}`}
-                className="slider-image"
+                className="slider-image w-[100px]"
               />
             ))}
           </div>
@@ -47,13 +47,13 @@ export default RotatedImageSlider;
 
 export const MainBox = () => {
     return (
-        <div className="relative w-[90%] mx-auto mt-[100px] rounded-[50px] h-[80%] border-4 border-orange-400 overflow-hidden">
+        <div className="relative w-[90%] mx-auto mt-[100px] rounded-[50px] h-[80%] lg:h-[80%] border-4 border-orange-400 overflow-hidden">
             {/* Text content */}
             <div className="absolute z-10 bg-black/50 flex flex-col justify-center items-center text-center w-full h-full text-white p-4">
-                <div className="font-bold text-8xl mb-3">
+                <div className="font-bold text-4xl lg:text-8xl mb-3">
                     Start Of Something New
                 </div>
-                <div className="text-3xl mb-5">
+                <div className="text-xl lg:text-3xl mb-5">
                     Description (optional)
                 </div>
                 <div className="flex">

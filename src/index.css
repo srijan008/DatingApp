@@ -82,14 +82,14 @@ body {
     transform: translateY(0); /* Start position */
   }
   100% {
-    transform: translateY(-50%); /* Move up by 100% of the slider */
+    transform: translateY(-10%); /* Move up by 100% of the slider */
   }
 }
 
 /* Keyframes for sliding DOWN */
 @keyframes slide-down {
   0% {
-    transform: translateY(-50%); /* Start from bottom */
+    transform: translateY(-10%); /* Start from bottom */
   }
   100% {
     transform: translateY(0); /* Move down to original position */
