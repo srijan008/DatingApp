@@ -12,7 +12,7 @@ export const WeDifferent = () => {
                 </div>
                 <div className="text-xl">
                     (content)
-                    
+
                 </div>
                 <div className="hidden lg:flex scale-50 lg:scale-100">
                     <div className="block lg:flex">
@@ -29,4 +29,4 @@ export const WeDifferent = () => {
 
         </div>
     );
-    }
+}

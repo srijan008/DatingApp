@@ -16,4 +16,7 @@ export default defineConfig({
     },
     chunkSizeWarningLimit: 800, // Adjust chunk size warning limit (optional)
   },
+  optimizeDeps: {
+    exclude: ['jsonwebtoken', 'jws'] // Exclude JWT libraries if not needed
+  }
 })
