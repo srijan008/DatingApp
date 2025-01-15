@@ -6,7 +6,7 @@ import UserStatsPieChart from '../../components/ActiveUserChart';
 import ChartComponent from '../../components/DashbboardCharts';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
-import { Audio } from 'react-loader-spinner';
+import { ThreeCircles } from 'react-loader-spinner';
 // import {data} from '../../components/DashbboardCharts';
 
 const data = {
@@ -151,14 +151,14 @@ const InsightsDashboard = () => {
   if (isLoading) {
     return <div className="flex justify-center items-center bg-gray-100/70 h-[90vh] w-full">
       <div className='flex flex-col justify-center items-center'>
-      <Audio
+      <ThreeCircles
+        visible={true}
         height="100"
         width="100"
         color="blue"
-        ariaLabel="audio-loading"
+        ariaLabel="three-circles-loading"
         wrapperStyle={{}}
-        wrapperClass="wrapper-class"
-        visible={true}
+        wrapperClass=""
         />
 
       <div className='flex justify-center items-center'>
