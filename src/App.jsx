@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Sidebar from "./components/Sidebar";
 import HomePage from "./pages/Home/HomePage";
 import UsersPanel from "./pages/Admin/Userspanel";
-import UserInfo from "./pages/Admin/UserInfo";
+import UserInfo from "./pages/Admin/Userinfo";
 import ClassifiedForm from "./pages/Admin/ClassifiedForm";
 import Chart1 from "./pages/Admin/Insights";
 import Advertisements from "./pages/Admin/Advertisements";
