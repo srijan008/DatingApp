@@ -1,137 +1,124 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import SearchBar from '../../components/Searchbar';
+import toast from 'react-hot-toast';
+import {Oval, Comment } from 'react-loader-spinner'
+import axios from 'axios';
 const Advertisements = () => {
-  return (
-    <div className='bg-white/70'>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 rounded-xl ">
-        <CardComponent />
-        <CardComponent />
-        <CardComponent />
-        <CardComponent />
-        <CardComponent />
-        <CardComponent />
-        <CardComponent />
-        <CardComponent />
-        <CardComponent />
-        <CardComponent />
+  const [loading, setLoading] = useState(true);
+  const [ads, setAds] = useState([]);
 
-    </div>
+  useEffect(() => {
+    const getAds = async () => {
+      const token = window.sessionStorage.getItem("token");
+      if (!token) {
+        console.error("Authentication token not found!");
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          "http://13.235.72.216/auth/get-classifieduser-for-admin",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if(response.data.message === "classifieduser retrieved successfully") {
+          toast.success(response.data.message);
+          setAds(response.data.classifieduser);
+          setLoading(false);
+      } else {
+        toast.error("Failed to retrieve ads");
+        console.error("Failed to retrieve ads");
+      }
+
+      } catch (error) {
+        console.error("Error fetching ads:", error);
+      }
+    };
+
+    getAds();
+  }, []);
+
+  return (
+    <div className='bg-white/20 p-5'>
+      <div>
+        <SearchBar/>
+      </div>
+      {loading ? ( <div className='flex justify-center'>
+        <Comment
+          visible={true}
+          height="80"
+          width="80"
+          ariaLabel="comment-loading"
+          wrapperStyle={{}}
+          wrapperClass="comment-wrapper"
+          color="#fff"
+          backgroundColor="#F4442E"
+          />
+      </div>) : " "}
+     
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 rounded-xl">
+        {ads.map((ad) => (
+          <div key={ad.id} className="bg-white rounded-lg shadow-md p-4">
+            <div className="flex flex-col justify-between mt-4">
+              <UserCard user={ad} />
+              <div className='flex justify-center'>
+              <Link to={`/admin/editform/${ad.id}`} className="text-blue-500 mt-4 hover:text-orange-400 transition transform hover:-translate-y-0.5">
+                View Details
+              </Link>
+              </div>
+
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
 
   );
 }
 
+const UserCard = ({ user }) => {
+  return (
+    <div className="flex flex-col bg-white rounded-lg shadow-lg p-4 hover:shadow-xl transition-shadow duration-300">
+      <div className="flex items-center mb-4">
+        {/* Add a placeholder avatar or profile picture */}
+        <div className="w-16 h-16 bg-gray-200 rounded-full flex-shrink-0 overflow-hidden">
+          <img 
+            src={user.profilePicture || "https://cdn-icons-png.flaticon.com/512/149/149071.png"} 
+            alt={user.name} 
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="ml-4">
+          <h2 className="text-lg font-bold text-gray-800">{user.name}</h2>
+          <p className="text-sm text-gray-500">{user.email}</p>
+        </div>
+      </div>
+      <ul className="list-disc pl-5 text-gray-700 space-y-2">
+        <li><span className="font-medium">Mobile:</span> {user.mobile_number}</li>
+        <li><span className="font-medium">Gender:</span> {user.gender}</li>
+        <li><span className="font-medium">Height:</span> {user.height} cm</li>
+        {user.location && (
+          <li>
+            <span className="font-medium">Location:</span> {user.location}
+          </li>
+        )}
+      </ul>
+      <div className="mt-4">
+        <button className="w-full py-2 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition-colors duration-300">
+          Contact
+        </button>
+      </div>
+    </div>
+  );
+};
+
+
+
 export default Advertisements;
 
 
-const CardComponent = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
 
-  return (
-
-      <div className="h-full">
-        {/* Card */}
-        <div className="max-w-sm mx-auto bg-white shadow-lg rounded-xl border border-gray-200">
-          <div className="flex flex-col h-full">
-            {/* Card top */}
-            <div className="flex-grow p-5">
-              <div className="flex justify-between items-start">
-                {/* Image + name */}
-                <header>
-                  <div className="flex mb-2">
-                    <div className="mt-1 pr-1">
-                      <a
-                        className="inline-flex text-gray-800 hover:text-gray-900"
-                        href="#0"
-                      >
-                        <h2 className="text-xl leading-snug justify-center font-semibold">
-                          Dominik McNeail
-                        </h2>
-                      </a>
-                    </div>
-                  </div>
-                </header>
-                {/* Menu button */}
-                <div className="relative inline-flex flex-shrink-0">
-                  <button
-                    className="text-gray-400 hover:text-gray-500 rounded-full focus:outline-none focus-within:ring-2"
-                    onClick={() => setMenuOpen(!menuOpen)}
-                    aria-haspopup="true"
-                    aria-expanded={menuOpen}
-                  >
-                    <span className="sr-only">Menu</span>
-                    <svg
-                      className="w-8 h-8 fill-current"
-                      viewBox="0 0 32 32"
-                    >
-                      <circle cx="16" cy="16" r="2" />
-                      <circle cx="10" cy="16" r="2" />
-                      <circle cx="22" cy="16" r="2" />
-                    </svg>
-                  </button>
-                  {menuOpen && (
-                    <div className="origin-top-right z-10 absolute top-full right-0 min-w-[9rem] bg-white border border-gray-200 py-1.5 rounded shadow-lg overflow-hidden mt-1">
-                      <ul>
-                        <li>
-                          <a
-                            className="font-medium text-sm text-gray-600 hover:text-gray-800 flex py-1 px-3"
-                            href="#0"
-                          >
-                            Option 1
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            className="font-medium text-sm text-gray-600 hover:text-gray-800 flex py-1 px-3"
-                            href="#0"
-                          >
-                            Option 2
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            className="font-medium text-sm text-red-500 hover:text-red-600 flex py-1 px-3"
-                            href="#0"
-                          >
-                            Remove
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </div>
-              {/* Bio */}
-              <div className="mt-2">
-                <div className="text-sm">
-                  Fitness Fanatic, Design Enthusiast, Mentor, Meetup Organizer &
-                  PHP Lover.
-                </div>
-              </div>
-            </div>
-            {/* Card footer */}
-            <div className="border-t border-gray-200">
-              <div className="flex divide-x divide-gray-200">
-                <a
-                  className="block flex-1 text-center text-sm text-gray-600 hover:text-gray-800 font-medium px-3 py-4 group"
-                  href="#0"
-                >
-                  <div className="flex items-center justify-center">
-                    <svg
-                      className="w-4 h-4 fill-current text-gray-400 group-hover:text-gray-500 flex-shrink-0 mr-2"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M11.7.3c-.4-.4-1-.4-1.4 0l-10 10c-.2.2-.3.4-.3.7v4c0 .6.4 1 1 1h4c.3 0 .5-.1.7-.3l10-10c.4-.4.4-1 0-1.4l-4-4zM4.6 14H2v-2.6l6-6L10.6 8l-6 6zM12 6.6L9.4 4 11 2.4 13.6 5 12 6.6z" />
-                    </svg>
-                    <Link to = '/admin/formedit/:id'>
-                    <span>Edit Profile</span>
-                    </Link>
-                  </div>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-  );
-};

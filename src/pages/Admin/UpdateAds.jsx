@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 const UpdateForm = () => {
   const [selectedFields, setSelectedFields] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [currentAd, setCurrentAd] = useState({});
   const [formData, setFormData] = useState({
     adId: "",
     description: "",
@@ -39,6 +43,42 @@ const UpdateForm = () => {
     places_interested: [],
     wanted: ""
   });
+
+  const {id} = useParams();
+
+  // useEffect(() => {
+  //   const getAds = async () => {
+  //     const token = window.sessionStorage.getItem("token");
+  //     if (!token) {
+  //       console.error("Authentication token not found!");
+  //       return;
+  //     }
+  //     try {
+  //       const response = await axios.get(
+  //         "http://13.235.72.216/auth/get-classifieduser-for-admin",
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       );
+  //       if(response.data.message === "classifieduser retrieved successfully") {
+  //         toast.success(response.data.message);
+  //         const ad = response.data.classifieduser.find(ad => ad.id === id);
+  //         setCurrentAd(ad);
+  //         setLoading(false);
+  //     } else {
+  //       toast.error("Failed to retrieve ads");
+  //       console.error("Failed to retrieve ads");
+  //     }
+
+  //     } catch (error) {
+  //       console.error("Error fetching ads:", error);
+  //     }
+  //   };
+
+  //   getAds();
+  // }, []);
 
   const handleFieldToggle = (fieldName) => {
     setSelectedFields(prev => ({

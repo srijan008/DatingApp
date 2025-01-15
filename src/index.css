@@ -9,7 +9,7 @@ body {
     padding: 0;
     overflow-x: hidden; /* Disable horizontal scrolling */
   }
-  /* Fixed background image for the entire app */
+
   body::before {
     content: "";
     position: fixed;
@@ -17,19 +17,23 @@ body {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-image: url('./assets/pattern-randomized.svg'); /* Your background image */
+    z-index: -1; 
+    pointer-events: none; 
+    background-image: url('https://cdn.pixabay.com/photo/2016/04/18/16/22/gradient-1336854_640.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    z-index: -1; /* Keeps it behind all other content */
-    pointer-events: none; /* Prevent interaction with the background */
   }
   
   /* App container */
   .app-container {
     position: relative;
-    overflow-y: auto; /* Enable scrolling for the content */
-    height: 100vh; /* Ensure it covers the full viewport height */
+    overflow-y: auto; 
+    height: 100vh; 
+    background-image: url('./assets/pattern-randomized.svg'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
   }
   
 

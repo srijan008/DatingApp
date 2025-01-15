@@ -1,3 +1,4 @@
+import { useParams } from "next/navigation";
 import { Link } from "react-router-dom";
 
 const Matches = () => {
@@ -7,13 +8,6 @@ const Matches = () => {
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <caption class="p-5 text-5xl font-bold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
                     <div className="flex">
-                        <Link to = "/admin/userinfo/:id">
-                        <div className="bg-gray-200 flex items-center mr-3 p-2 rounded-full ">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
-                        </svg>
-                        </div>
-                        </Link>
                         <div>
                         Matches
                         </div>
