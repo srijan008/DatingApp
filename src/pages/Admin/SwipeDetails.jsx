@@ -1,4 +1,4 @@
-import { useParams } from "next/navigation";
+
 import { Link } from "react-router-dom";
 
 const Swipes = () => {
