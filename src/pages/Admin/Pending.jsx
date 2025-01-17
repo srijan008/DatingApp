@@ -3,27 +3,33 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { FallingLines } from 'react-loader-spinner';
 
-const MatchesPage = () => {
+const PendingPage = () => {
     const { id } = useParams();
-    const [matches, setMatches] = useState([]);
+    const [Pending, setPending] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [noSwipes, setNoSwipes] = useState(false);
 
     useEffect(() => {
-        const fetchMatches = async () => {
+        const fetchPending = async () => {
+            if (!id) {
+                setError("ID is missing from the URL");
+                setLoading(false);
+                return;
+            }
+    
             setLoading(true);
             setError(null);
             setNoSwipes(false);
-            
+    
             const adminToken = window.sessionStorage.getItem("token");
-
+    
             if (!adminToken) {
                 setError("Admin token not found");
                 setLoading(false);
                 return;
             }
-
+    
             try {
                 const userTokenResponse = await axios.get(
                     `http://13.235.72.216/auth/get-userToken/${id}`,
@@ -33,21 +39,21 @@ const MatchesPage = () => {
                         },
                     }
                 );
-
+    
                 const userToken = userTokenResponse.data.token;
                 if (userToken) {
-                    const matchesResponse = await axios.get(
-                        `http://13.235.72.216/auth/get-all-matches`,
+                    const PendingResponse = await axios.get(
+                        `http://13.235.72.216/auth/get-all-pending`,
                         {
                             headers: {
                                 Authorization: `Bearer ${userToken}`,
                             },
                         }
                     );
-
-                    if (matchesResponse.data.message === "Requests found successfully") {
-                        setMatches(matchesResponse.data.Matches);
-                    } else if (matchesResponse.data.message === "No  Swipes found") {
+    
+                    if (PendingResponse.data.message === "Requests found successfully") {
+                        setPending(PendingResponse.data.Matches);
+                    } else if (PendingResponse.data.message === "No  Pending Found") {
                         setNoSwipes(true);
                     }
                 } else {
@@ -55,20 +61,20 @@ const MatchesPage = () => {
                 }
             } catch (err) {
                 console.error(err);
-                setError("No Matches found!");
+                setError("No Pending Found!");
             } finally {
                 setLoading(false);
             }
         };
-
-        fetchMatches();
+    
+        fetchPending();
     }, [id]);
 
     if (loading) {
         return (
             <div className="min-h-screen rounded-lg flex flex-col items-center justify-center bg-gray-50/50">
                 <FallingLines color="#4F46E5" width="100" visible={true} />
-                <div className="text-2xl font-semibold text-gray-700 mt-4">Loading matches...</div>
+                <div className="text-2xl font-semibold text-gray-700 mt-4">Loading Pending...</div>
             </div>
         );
     }
@@ -101,20 +107,20 @@ const MatchesPage = () => {
 
     return (
         <div className="min-h-screen rounded-lg bg-gray-50/50">
-            <MatchesDisplay matches={matches} />
+            <PendingDisplay Pending={Pending} />
         </div>
     );
 };
 
-const MatchesDisplay = ({ matches }) => {
-    if (!matches || matches.length === 0) {
+const PendingDisplay = ({ Pending }) => {
+    if (!Pending || Pending.length === 0) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50">
                 <div className="text-center p-8 bg-white rounded-lg shadow-lg">
                     <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                     </svg>
-                    <h1 className="text-2xl font-semibold text-gray-600">No Matches Available</h1>
+                    <h1 className="text-2xl font-semibold text-gray-600">No Pending Available</h1>
                 </div>
             </div>
         );
@@ -126,10 +132,10 @@ const MatchesDisplay = ({ matches }) => {
                 <div className="px-6 py-4 border-b border-gray-200">
                     <div className="flex items-center justify-between">
                         <h2 className="text-xl font-semibold text-gray-800">
-                            Matches Overview
+                            Pending Overview
                         </h2>
                         <span className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium">
-                            Total: {matches.length}
+                            Total: {Pending.length}
                         </span>
                     </div>
                 </div>
@@ -156,7 +162,7 @@ const MatchesDisplay = ({ matches }) => {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {matches.map((match, index) => (
+                            {Pending.map((match, index) => (
                                 <tr key={match.slNo} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="text-sm font-medium text-gray-900">
@@ -196,4 +202,4 @@ const MatchesDisplay = ({ matches }) => {
     );
 };
 
-export default MatchesPage;
+export default PendingPage;

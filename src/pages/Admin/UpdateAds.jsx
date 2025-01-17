@@ -1,13 +1,11 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const UpdateForm = () => {
   const [selectedFields, setSelectedFields] = useState({});
   const [loading, setLoading] = useState(true);
-  const [currentAd, setCurrentAd] = useState({});
   const [formData, setFormData] = useState({
-    adId: "",
     description: "",
     email: "",
     mobile_number: "",
@@ -18,7 +16,6 @@ const UpdateForm = () => {
     location: { state: "", district: "", city: "" },
     job_location: { state: "", city: "" },
     income: "",
-    class_assets: { property: "", vehicles: [] },
     education: "",
     profession: "",
     occupation_type: "",
@@ -26,59 +23,46 @@ const UpdateForm = () => {
     family_members: "",
     religion: "",
     caste: "",
-    pets: [],
-    places: [],
     bio: "",
     languages_known: [],
-    personality_type: "",
-    drinking_habits: "",
-    smoking: false,
-    diet: "",
-    sports: [],
-    travel: [],
-    exercise: [],
-    gambling_habits: "",
-    zodiac: "",
-    marital_status: "Single",
-    places_interested: [],
-    wanted: ""
+    personality_type: ""
   });
 
-  const {id} = useParams();
+  const { id } = useParams();
 
-  // useEffect(() => {
-  //   const getAds = async () => {
-  //     const token = window.sessionStorage.getItem("token");
-  //     if (!token) {
-  //       console.error("Authentication token not found!");
-  //       return;
-  //     }
-  //     try {
-  //       const response = await axios.get(
-  //         "http://13.235.72.216/auth/get-classifieduser-for-admin",
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       );
-  //       if(response.data.message === "classifieduser retrieved successfully") {
-  //         toast.success(response.data.message);
-  //         const ad = response.data.classifieduser.find(ad => ad.id === id);
-  //         setCurrentAd(ad);
-  //         setLoading(false);
-  //     } else {
-  //       toast.error("Failed to retrieve ads");
-  //       console.error("Failed to retrieve ads");
-  //     }
+  useEffect(() => {
+    const fetchCurrentAd = async () => {
+      const token = window.sessionStorage.getItem("token");
+      if (!token) {
+        console.error("Authentication token not found!");
+        return;
+      }
 
-  //     } catch (error) {
-  //       console.error("Error fetching ads:", error);
-  //     }
-  //   };
+      try {
+        const response = await axios.get(
+          "http://13.235.72.216/auth/get-classifieduser-for-admin",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-  //   getAds();
-  // }, []);
+        if (response.data.message === "classifieduser retrieved successfully") {
+          const ad = response.data.classifieduser.find(ad => ad.id === id);
+          setFormData(prevData => ({
+            ...prevData,
+            ...ad
+          }));
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching ad:", error);
+      }
+    };
+
+    fetchCurrentAd();
+  }, [id]);
 
   const handleFieldToggle = (fieldName) => {
     setSelectedFields(prev => ({
@@ -88,24 +72,7 @@ const UpdateForm = () => {
   };
 
   const handleInputChange = (field, value) => {
-    if (field === 'smoking') {
-      setFormData(prev => ({
-        ...prev,
-        [field]: value === 'true'
-      }));
-      return;
-    }
-
-    if (Array.isArray(formData[field])) {
-      setFormData(prev => ({
-        ...prev,
-        [field]: value.split(',').map(item => item.trim())
-      }));
-      return;
-    }
-
-    if (typeof formData[field] === 'object' && !Array.isArray(formData[field])) {
-      // Handle nested objects (location and job_location)
+    if (field.includes('.')) {
       const [parent, child] = field.split('.');
       setFormData(prev => ({
         ...prev,
@@ -117,15 +84,33 @@ const UpdateForm = () => {
       return;
     }
 
+    if (field === 'languages_known') {
+      setFormData(prev => ({
+        ...prev,
+        [field]: value.split(',').map(item => item.trim())
+      }));
+      return;
+    }
+
+    if (field === 'mobile_number' || field === 'age' || field === 'height' || field === 'family_members') {
+      const numValue = parseFloat(value) || '';
+      setFormData(prev => ({
+        ...prev,
+        [field]: numValue
+      }));
+      return;
+    }
+
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const updatedFields = {};
+    
     Object.keys(selectedFields).forEach(field => {
       if (selectedFields[field]) {
         if (field.includes('.')) {
@@ -137,102 +122,115 @@ const UpdateForm = () => {
         }
       }
     });
-    console.log('Updated fields:', updatedFields);
+
+    try {
+      const token = window.sessionStorage.getItem("token");
+      const response = await axios.post(
+        `http://13.235.72.216/auth/update-classified/`,
+        {
+          "cls_id" : id,
+          ...updatedFields
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
+      if (response.data.message === "classifieduser updated successfully") {
+        alert("Profile updated successfully!");
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Failed to update profile. Please try again.");
+    }
   };
 
-  const renderInput = (fieldName, value) => {
-    if (fieldName === 'smoking') {
-      return (
-        <select 
-          value={value.toString()} 
-          onChange={(e) => handleInputChange(fieldName, e.target.value)}
-          className="border p-1 rounded ml-2"
-        >
-          <option value="true">Yes</option>
-          <option value="false">No</option>
-        </select>
-      );
-    }
+  if (loading) {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  }
 
-    if (Array.isArray(value)) {
-      return (
-        <input
-          type="text"
-          value={value.join(', ')}
-          onChange={(e) => handleInputChange(fieldName, e.target.value)}
-          placeholder="Enter comma-separated values"
-          className="border p-1 rounded ml-2"
-        />
-      );
-    }
-
-    if (typeof value === 'object' && value !== null) {
-      return Object.keys(value).map(key => (
-        <div key={key} className="ml-4 mt-1">
-          <input
-            type="checkbox"
-            checked={selectedFields[`${fieldName}.${key}`] || false}
-            onChange={() => handleFieldToggle(`${fieldName}.${key}`)}
-            className="mr-2"
-          />
-          <label>{key}:</label>
-          {selectedFields[`${fieldName}.${key}`] && (
-            <input
-              type="text"
-              value={value[key]}
-              onChange={(e) => handleInputChange(`${fieldName}.${key}`, e.target.value)}
-              className="border p-1 rounded ml-2"
-            />
-          )}
-        </div>
-      ));
-    }
+  const renderField = (fieldName, label, type = "text") => {
+    const value = fieldName.includes('.')
+      ? formData[fieldName.split('.')[0]][fieldName.split('.')[1]]
+      : formData[fieldName];
 
     return (
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => handleInputChange(fieldName, e.target.value)}
-        className="border p-1 rounded ml-2"
-      />
+      <div className="mb-4">
+        <div className="flex items-start">
+          <input
+            type="checkbox"
+            checked={selectedFields[fieldName] || false}
+            onChange={() => handleFieldToggle(fieldName)}
+            className="mt-2 mr-2"
+          />
+          <div className="flex-1">
+            <label className="block text-gray-700 text-lg mb-2">
+              {label}
+            </label>
+            {selectedFields[fieldName] && (
+              <input
+                type={type}
+                value={value || ''}
+                onChange={(e) => handleInputChange(fieldName, e.target.value)}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+              />
+            )}
+          </div>
+        </div>
+      </div>
     );
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-4 bg-white">
-      <h1 className="text-2xl font-bold mb-4">Update Profile</h1>
-      <form onSubmit={handleSubmit} className="space-y-2">
-        {Object.entries(formData).map(([field, value]) => {
-          if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-            return (
-              <div key={field} className="mb-4">
-                <div className="font-semibold">{field}:</div>
-                {renderInput(field, value)}
-              </div>
-            );
-          }
+    <div className="min-h-screen bg-gray-100/50 rounded-lg py-8">
+      <div className="max-w-4xl mx-auto bg-white/60 rounded-lg shadow-md p-8">
+        <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">
+          Update Profile
+        </h1>
+        <form onSubmit={handleSubmit} className="space-y-4 text-lg">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xl">
+            {renderField("name", "Full Name")}
+            {renderField("email", "Email", "email")}
+            {renderField("mobile_number", "Mobile Number", "number")}
+            {renderField("age", "Age", "number")}
+            {renderField("gender", "Gender")}
+            {renderField("height", "Height (in feet)", "number")}
+            {renderField("location.state", "State")}
+            {renderField("location.district", "District")}
+            {renderField("location.city", "City")}
+            {renderField("job_location.state", "Job Location State")}
+            {renderField("job_location.city", "Job Location City")}
+            {renderField("income", "Income")}
+            {renderField("education", "Education")}
+            {renderField("profession", "Profession")}
+            {renderField("occupation_type", "Occupation Type")}
+            {renderField("company", "Company")}
+            {renderField("family_members", "Family Members", "number")}
+            {renderField("religion", "Religion")}
+            {renderField("caste", "Caste")}
+            {renderField("languages_known", "Languages Known (comma-separated)")}
+            {renderField("personality_type", "Personality Type")}
+          </div>
 
-          return (
-            <div key={field} className="flex items-start">
-              <input
-                type="checkbox"
-                checked={selectedFields[field] || false}
-                onChange={() => handleFieldToggle(field)}
-                className="mt-1 mr-2"
-              />
-              <label className="min-w-[150px]">{field}:</label>
-              {selectedFields[field] && renderInput(field, value)}
-            </div>
-          );
-        })}
-        <button 
-          type="submit" 
-          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          disabled={Object.values(selectedFields).every(v => !v)}
-        >
-          Update Selected Fields
-        </button>
-      </form>
+          <div className="mt-6">
+            {renderField("description", "Description")}
+            {renderField("bio", "Bio")}
+          </div>
+
+          <div className="mt-8 flex justify-center">
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={Object.values(selectedFields).every(v => !v)}
+            >
+              Update Selected Fields
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

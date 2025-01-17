@@ -33,7 +33,6 @@ const SubusersTable = () => {
                     if (user && user.subusers) {
                         setSubusers(user.subusers);
                         setLoading(false);  
-                        toast.success("Subusers retrieved successfully!");
                     } else {
                         toast.error("No subusers found for this user!");
                     }

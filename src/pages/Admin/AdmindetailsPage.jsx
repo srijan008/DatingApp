@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { Users } from "lucide-react";
 import axios from "axios";
 
@@ -57,7 +57,7 @@ const LinkedUsersPage = ({ id }) => {
   
         // Step 1: Get the target admin's token
         const adminTokenResponse = await axios.get(
-          `http://13.235.72.216/auth/get-adminToken/31`,
+          `http://13.235.72.216/auth/get-adminToken/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`, // Send current admin's token
@@ -168,6 +168,7 @@ const LinkedUsersPage = ({ id }) => {
             {referredUsers.length > 0 ? (
               <div className="space-y-3">
                 {referredUsers.map((user) => (
+                  <Link to = {``}>
                   <div
                     key={user.uid}
                     className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
@@ -196,6 +197,7 @@ const LinkedUsersPage = ({ id }) => {
                       </div>
                     </div>
                   </div>
+                  </Link>
                 ))}
               </div>
             ) : (

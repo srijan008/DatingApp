@@ -1,12 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SearchBar from '../../components/Searchbar';
 import toast from 'react-hot-toast';
-import {Oval, Comment } from 'react-loader-spinner'
+import { Comment } from 'react-loader-spinner'
 import axios from 'axios';
-const Advertisements = () => {
+import { Search } from 'lucide-react';
+
+export const AdsDataContext = createContext();
+
+const AdsDataProvider = ({children}) => {
   const [loading, setLoading] = useState(true);
-  const [ads, setAds] = useState([]);
+  const [ads, setData] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const getAds = async () => {
@@ -18,35 +23,74 @@ const Advertisements = () => {
 
       try {
         const response = await axios.get(
-          "http://13.235.72.216/auth/get-classifieduser-for-admin",
+          "http://13.235.72.216/auth/get-all-classified-forSuperAdmin",
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        if(response.data.message === "classifieduser retrieved successfully") {
-          toast.success(response.data.message);
-          setAds(response.data.classifieduser);
+        if(response.data.message == "Classified retrieved successfully") {
+          setData(response.data.classifieds);
           setLoading(false);
       } else {
-        toast.error("Failed to retrieve ads");
+        setError(response.data.message);
         console.error("Failed to retrieve ads");
       }
-
       } catch (error) {
         console.error("Error fetching ads:", error);
       }
     };
 
     getAds();
-  }, []);
+  }, [setData]);
+
+  return(
+    <AdsDataContext.Provider value={{ads, loading, error}}>
+      {children}
+    </AdsDataContext.Provider>
+  )
+
+}
+
+
+const Advertisements = () => {
+
+  const {ads, loading, error } = useContext(AdsDataContext);
+  const [searchTerm, setSearchTerm] = useState("");
+
+
+  if (error) return <div>Error: {error}</div>;
+
+  const getFilteredAds = () => {
+    if (!searchTerm.trim()) return ads;
+
+    const searchQuery = searchTerm.toLowerCase().trim();
+    
+    return ads.filter((ad) => {
+      return (
+        (ad?.name?.toLowerCase().includes(searchQuery) || 
+        ad?.mobile_number?.toLowerCase().includes(searchQuery) ||
+        ad?.email?.toLowerCase().includes(searchQuery))
+      );
+    });
+  };
+
+  const filteredAds = getFilteredAds();
 
   return (
+
     <div className='bg-white/20 p-5'>
-      <div>
-        <SearchBar/>
-      </div>
+          <div className="relative mb-6">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Search Ads by name, mobile or email ..."
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
       {loading ? ( <div className='flex justify-center'>
         <Comment
           visible={true}
@@ -61,13 +105,13 @@ const Advertisements = () => {
       </div>) : " "}
      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 rounded-xl">
-        {ads.map((ad) => (
-          <div key={ad.id} className="bg-white rounded-lg shadow-md p-4">
+        {filteredAds.map((ad) => (
+          <div key={ad.cls_id} className="bg-white rounded-lg shadow-md p-4">
             <div className="flex flex-col justify-between mt-4">
               <UserCard user={ad} />
               <div className='flex justify-center'>
-              <Link to={`/admin/editform/${ad.id}`} className="text-blue-500 mt-4 hover:text-orange-400 transition transform hover:-translate-y-0.5">
-                View Details
+              <Link to={`/admin/editform/${ad.cls_id}`} className="text-blue-500 mt-4 hover:text-orange-400 transition transform hover:-translate-y-0.5">
+                Update
               </Link>
               </div>
 
@@ -76,7 +120,6 @@ const Advertisements = () => {
         ))}
       </div>
     </div>
-
   );
 }
 
@@ -98,12 +141,12 @@ const UserCard = ({ user }) => {
         </div>
       </div>
       <ul className="list-disc pl-5 text-gray-700 space-y-2">
-        <li><span className="font-medium">Mobile:</span> {user.mobile_number}</li>
+        <li><span className="font-medium">Mobile:</span> {user["mobile_number"]}</li>
         <li><span className="font-medium">Gender:</span> {user.gender}</li>
         <li><span className="font-medium">Height:</span> {user.height} cm</li>
         {user.location && (
           <li>
-            <span className="font-medium">Location:</span> {user.location}
+            <span className="font-medium">Location:</span> {user.location.city}, {user.location.district}, {user.location.state}, 
           </li>
         )}
       </ul>
@@ -115,6 +158,10 @@ const UserCard = ({ user }) => {
     </div>
   );
 };
+
+export { AdsDataProvider };
+
+
 
 
 

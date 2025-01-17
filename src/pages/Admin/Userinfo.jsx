@@ -1,207 +1,226 @@
-import React, { useEffect, useState } from "react";
-import "./userinfo.css";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import toast from "react-hot-toast";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { FallingLines } from 'react-loader-spinner';
+import { toast } from 'react-hot-toast';
 
 const UserInfo = () => {
-  // const [verified, setVerified] = useState(true);
-  const [enabled, setEnabled] = useState(false);
   const [moreDetails, setMoreDetails] = useState(false);
   const [editStatusMenu, setEditStatusMenu] = useState(false);
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
+  const [userDetails, setUserDetails] = useState({
+    pending: 0,
+    matches: 0,
+    requests: 0,
+    disliked: 0,
+    reject: 0
+  });
+  const [loading, setLoading] = useState(true);
   const { id } = useParams();
 
   useEffect(() => {
-
-    if (users.length === 0) {
-      const storedUsers = localStorage.getItem('Users');
-      if (storedUsers) {
-        const parsedUsers = JSON.parse(storedUsers);
-        setUsers(parsedUsers);
-      } else {
-
-        fetchUsers();
+    const getUserDetails = async () => {
+      const token = window.sessionStorage.getItem("token");
+      try {
+        const response = await axios.get(`http://13.235.72.216/auth/get-userMatch-details/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        // Log the response to debug
+        console.log('API Response:', response.data);
+        
+        // Check for both "message" and "messsgae" due to the typo in API
+        if (response.data.message === "data fetched successfully" || 
+            response.data.messsgae === "data fetched successfully") {
+          // Extract data directly from response.data since the values are at the root level
+          const { pending, matches, requests, disliked, reject } = response.data;
+          setUserDetails({
+            pending: pending ?? 0, // Use nullish coalescing to handle 0 values correctly
+            matches: matches ?? 0,
+            requests: requests ?? 0,
+            disliked: disliked ?? 0,
+            reject: reject ?? 0
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+        toast.error('Failed to fetch user details');
       }
-    }
+    };
+    getUserDetails();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const token = window.sessionStorage.getItem("token");
+      try {
+        const response = await axios.get('http://13.235.72.216/auth/get-unverified-users', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+        if (response.data) {
+          setUsers(response.data);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error fetching users:', error);
+        toast.error('Failed to fetch users');
+      }
+    };
+    fetchUsers();
   }, []);
 
-  const fetchUsers = async () => {
-    try {
-
-      const response = await fetch('http://13.235.72.216/auth/get-all-user-for-admin');
-      const data = await response.json();
-      setUsers(data);
-
-      localStorage.setItem('users', JSON.stringify(data));
-    } catch (error) {
-      console.error('Error fetching users:', error);
-    }
-  };
-
-  const User = users.find((user) => user.uid === Number(id));
-
-  const handleEditStatusMenu = () => {
-    setEditStatusMenu(!editStatusMenu);
-  };
+  const user = users.find((user) => user.uid === Number(id));
 
   const handleVerify = async (event) => {
     event.preventDefault();
     try {
-      // Replace with your actual token retrieval method
       const token = sessionStorage.getItem("token");
       if (!token) {
         toast.error("Authentication token not found");
         return;
       }
-  
+
       const response = await axios.post(
         `http://13.235.72.216/auth/verify-user/${id}`,
-        {}, // Post data if required (currently empty)
+        {},
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-  
+
       if (response.data.message === "User verified successfully") {
         toast.success("User verified successfully");
-        navigate("/admin/users"); // Navigate without refresh
+        navigate("/admin/users");
       } else {
         toast.error(response.data.message || "Failed to verify user");
       }
     } catch (error) {
-      console.error("Error verifying user:", error.response?.data || error.message);
-      toast.error(
-        error.response?.data?.message || error.message || "Error verifying user"
-      );
+      console.error("Error verifying user:", error);
+      toast.error("Error verifying user");
     }
   };
-  
 
-  const handleMoreDetails = () => {
-    setMoreDetails(!moreDetails);
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen bg flex flex-col items-center justify-center p-4">
+        <FallingLines color="red" width="100" visible={true} />
+        <h1 className="text-4xl font-mono font-bold mt-4">Loading...</h1>
+      </div>
+    );
+  }
 
-  if (!User) {
-    return <div>User not found</div>;
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <h1 className="text-2xl font-bold text-gray-700">User not found</h1>
+      </div>
+    );
   }
 
   return (
-    <div className="p-10">
-      <div className="p-6 bg-white shadow mt-5 rounded-xl">
-        <div className="grid grid-cols-1 md:grid-cols-3">
-          <div className="grid grid-cols-3 text-center order-last md:order-first mt-20 md:mt-0">
-            <div>
-              <p className="font-bold text-gray-700 text-xl">22</p>
-              <button className="text-gray-400 hover:text-orange-400 transition transform hover:-translate-y-0.5">
-                Blocked
-              </button>
-            </div>
-            <div>
-              <p className="font-bold text-gray-700 text-xl">10</p>
-              <button className="text-gray-400 hover:text-orange-400 transition transform hover:-translate-y-0.5">
-                Reported
-              </button>
-            </div>
+    <div className=" p-4 md:p-6">
+      <div className="bg-white  rounded-lg shadow-lg p-6 relative mt-24">
+        {/* Profile Header */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Stats */}
+          <div className="grid grid-cols-3 bg-orange-100 p-2 rounded-lg gap-4 order-last md:order-first">
+            {[
+              { label: 'Pending', value: userDetails.pending },
+              { label: 'Matches', value: userDetails.matches },
+              { label: 'Requests', value: userDetails.requests },
+              { label: 'Disliked', value: userDetails.disliked },
+              { label: 'Reject', value: userDetails.reject },
+              { label: 'Reported', value: user.reported_count}
+            ].map(({ label, value }) => (
+              <div key={label} className="text-center">
+                <p className="text-lg font-bold text-gray-700">{value}</p>
+                <p className="text-sm text-gray-500 hover:text-orange-400 cursor-pointer">
+                  {label}
+                </p>
+              </div>
+            ))}
           </div>
-          <div className="relative">
-            <div className="w-48 h-48 bg-indigo-100 mx-auto rounded-full shadow-xl absolute inset-x-0 top-0 -mt-24 flex items-center justify-center text-indigo-500">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-24 w-24"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                  clipRule="evenodd"
-                />
+
+          {/* Avatar */}
+          <div className="flex justify-center">
+            <div className="w-32 h-32 bg-indigo-100 rounded-full shadow-xl flex items-center justify-center text-indigo-500 -mt-20">
+              <svg className="w-16 h-16" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
               </svg>
             </div>
           </div>
-          <div className="space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center">
+
+          {/* Actions */}
+          <div className="flex justify-center gap-5 font-mono">
             <Link to={`/admin/matchtable/${id}`}>
-              <button className="text-white py-1 px-3 rounded-xl bg-blue-400 hover:bg-blue-500 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
+              <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg hover:shadow-lg transition transform hover:-translate-y-0.5">
                 Matches
               </button>
             </Link>
-            <Link to={`/admin/swipedetails/${id}`}>
-              <button className="text-white py-1 px-4 rounded-xl bg-black hover:bg-gray-500 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
-                Swipe Details
+            <Link to={`/admin/pendingtable/${id}`}>
+              <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg hover:shadow-lg transition transform hover:-translate-y-0.5">
+                Pending
               </button>
             </Link>
           </div>
         </div>
 
-        <div className="mt-20 text-center border-b pb-12">
-          <h1 className="text-4xl font-medium text-gray-700">
-            {User.name}, <span className="font-light text-gray-500">{User.age}</span>
+        {/* User Info */}
+        <div className="mt- text-center border-b pb-8">
+          <h1 className="text-3xl font-semibold text-gray-700">
+            {user.name}, <span className="text-gray-500">{user.age}</span>
           </h1>
-          <p className="font-light text-gray-600 mt-3">{User.location}</p>
-
-          <p className="mt-8 text-gray-500">
-            Verification Status: {" "}
-            <span className={User.verification_status ? "text-green-400" : "text-red-400"}>
-              {enabled ? "Verified" : "Not-Verified"}
+          <p className="text-gray-600 ">{user.location}</p>
+          <p className="text-gray-600 ">{user.mobile_number}</p>
+          <p className="text-gray-600 ">{user.email}</p>
+          <p className="mt-4">
+            Verification Status:{' '}
+            <span className={user.verification_status ? "text-green-500" : "text-red-500"}>
+              {user.verification_status ? "Verified" : "Not-Verified"}
             </span>
           </p>
-          {/* <p className="mt-2 text-gray-500">
-            Enable Status:{" "}
-            <span className={enabled ? "text-green-400" : "text-red-400"}>
-              {enabled ? "Enabled" : "Disabled"}
-            </span>
-          </p> */}
-          <button
-            onClick={handleEditStatusMenu}
-            className="text-blue-500 mt-4 hover:text-orange-400"
-          >
-            {editStatusMenu ? "" : "Edit Status"}
-          </button>
-          <div className="flex justify-center">
-            {editStatusMenu ? (
-              <EditStatus close={handleEditStatusMenu} verify={handleVerify} />
-            ) : null}
-          </div>
-        </div>
-
-        <div className="mt-12 flex flex-col justify-center">
-          <p className="text-gray-600 text-center font-light lg:px-16">
-            An artist of considerable range, Ryan — the name taken by
-            Melbourne-raised, Brooklyn-based Nick Murphy — writes, performs and
-            records all of his own music, giving it a warm, intimate feel with a
-            solid groove structure. An artist of considerable range.
-          </p>
-        </div>
-        <div className="flex justify-center mt-5">
-          {moreDetails ? null : (
+          
+          {!user.verification_status && (
             <button
-              onClick={handleMoreDetails}
-              className="text-blue-500 hover:text-orange-400"
+              onClick={() => setEditStatusMenu(!editStatusMenu)}
+              className="mt-4 text-blue-500 hover:text-blue-600"
             >
-              More Details
+              {editStatusMenu ? "Cancel" : "Edit Status"}
             </button>
           )}
+          
+          {editStatusMenu && <EditStatus close={() => setEditStatusMenu(false)} verify={handleVerify} />}
         </div>
-        {moreDetails ? <MoreDetails user = {User}/> : null}
-        <div className="flex justify-center mt-5">
-          {moreDetails ? (
-            <button
-              onClick={handleMoreDetails}
-              className="text-blue-500 hover:text-orange-400"
-            >
-              Less details
-            </button>
-          ) : null}
+
+        {/* Bio */}
+        <div className="mt-8">
+          <p className="text-gray-600 text-center max-w-2xl mx-auto">
+            {user.bio || "No bio available"}
+          </p>
         </div>
+
+        {/* More Details Toggle */}
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => setMoreDetails(!moreDetails)}
+            className="text-blue-500 hover:text-blue-600"
+          >
+            {moreDetails ? "Show Less" : "More Details"}
+          </button>
+        </div>
+
+        {moreDetails && <MoreDetails user={user} />}
       </div>
     </div>
   );
 };
-
 const MoreDetails = ({user}) => {
 
   const userDetails = [
@@ -274,8 +293,8 @@ const MoreDetails = ({user}) => {
 const EditStatus = ({close, verify}) => {
   
     return (
-      <div className="flex justify-center items-center bg-gray-100">
-      <form className="bg-white shadow-md rounded-lg p-3 max-w-md w-full">
+      <div className="flex justify-center items-center ">
+      <form className=" shadow-md rounded-lg p-3 bg-gray-100 max-w-md w-full">
       <div className="flex justify-end">
           <button onClick={close} >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -284,10 +303,10 @@ const EditStatus = ({close, verify}) => {
           </button>
       </div>
         <div className="flex justify-center">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4"></h2>
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Status</h2>
         </div>
         <div>
-          <button onClick={verify} className="px-3 py-1 m-5 bg-green-500 text-white font-mono rounded-lg shadow-lg hover:bg-green-400">
+          <button onClick={verify} className="px-3 py-1  bg-green-500 text-white font-mono rounded-lg shadow-lg hover:bg-green-400">
             Verify
           </button>
         </div>

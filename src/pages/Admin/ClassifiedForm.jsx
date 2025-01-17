@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { toast } from "react-hot-toast";
+import { Toaster, toast } from "react-hot-toast";
 
 const ClassifiedForm = () => {
+  const [creating, setCreating] = useState(false);
   const [formData, setFormData] = useState({
     description: "",
     email: "",
@@ -11,10 +12,18 @@ const ClassifiedForm = () => {
     age: "",
     gender: "",
     height: "",
-    location: { state: "", district: "", city: "" },
-    job_location: { state: "", city: "" },
+    location: {
+      state: "",
+      district: "",
+      city: ""
+    },
+    job_location: {
+      state: "",
+      city: ""
+    },
+    photos_videos: null,
     income: "",
-    class_assets: { property: "", vehicles: [] },
+    class_assets: null,
     education: "",
     profession: "",
     occupation_type: "",
@@ -22,26 +31,13 @@ const ClassifiedForm = () => {
     family_members: "",
     religion: "",
     caste: "",
-    pets: [],
-    places: [],
     bio: "",
     languages_known: [],
-    personality_type: "",
-    drinking_habits: "",
-    smoking: false,
-    diet: "",
-    sports: [],
-    travel: [],
-    exercise: [],
-    gambling_habits: "",
-    zodiac: "",
-    marital_status: "Single",
-    places_interested: [],
-    wanted: "",
+    personality_type: ""
   });
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type } = e.target;
     if (name.includes(".")) {
       const [parent, child] = name.split(".");
       setFormData((prev) => ({
@@ -54,7 +50,7 @@ const ClassifiedForm = () => {
     } else {
       setFormData((prev) => ({
         ...prev,
-        [name]: type === "checkbox" ? checked : value,
+        [name]: type === "number" ? (value === "" ? "" : Number(value)) : value,
       }));
     }
   };
@@ -62,54 +58,95 @@ const ClassifiedForm = () => {
   const handleArrayChange = (name, value) => {
     setFormData((prev) => ({
       ...prev,
-      [name]: value.split(",").map((item) => item.trim()),
+      [name]: value.split(",").map((item) => item.trim()).filter(Boolean),
     }));
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
-  
+    e.preventDefault();
+    
+    setCreating(true);
     try {
-      // Retrieve token from sessionStorage
       const token = sessionStorage.getItem("token");
-  
-      // Validate token presence (optional but recommended)
       if (!token) {
         throw new Error("Missing authentication token");
       }
-  
-      // Prepare request body with formData
-      const requestBody = JSON.stringify(formData);
-  
-      // Make the POST request with authorization header
+
+      // Clean up the form data before submission
+      const cleanFormData = Object.entries(formData).reduce((acc, [key, value]) => {
+        // Remove empty strings, empty arrays, and null values
+        if (value === "" || value === null || (Array.isArray(value) && value.length === 0)) {
+          return acc;
+        }
+        // Handle nested objects
+        if (typeof value === "object" && !Array.isArray(value) && value !== null) {
+          const cleanNested = Object.entries(value).reduce((nestedAcc, [nestedKey, nestedValue]) => {
+            if (nestedValue !== "") {
+              nestedAcc[nestedKey] = nestedValue;
+            }
+            return nestedAcc;
+          }, {});
+          if (Object.keys(cleanNested).length > 0) {
+            acc[key] = cleanNested;
+          }
+          return acc;
+        }
+        // Convert number strings to numbers for specific fields
+        if (key === "mobile_number" || key === "age" || key === "family_members") {
+          acc[key] = value === "" ? null : Number(value);
+        } else if (key === "height") {
+          acc[key] = value === "" ? null : parseFloat(value);
+        } else {
+          acc[key] = value;
+        }
+        return acc;
+      }, {});
+
       const response = await axios.post(
         "http://13.235.72.216/auth/create-classified",
-        requestBody,
+        cleanFormData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         }
       );
-  
-      // Handle successful response
+
       if (response.data.message) {
         toast.success("Classified created successfully!");
-      } else {
-        console.warn("Unexpected response:", response.data); // Log unexpected response data
+        setInterval(() => {
+          window.location.reload();
+        }, 1000);
       }
     } catch (error) {
-      // Handle errors gracefully
       toast.error(error.response?.data?.message || "Error creating classified");
+      setCreating(false);
       console.error("Error:", error);
     }
   };
+
   return (
     <div className="mx-auto p-6">
+      <Toaster />
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="bg-gray-50 rounded-xl shadow p-6">
           <h2 className="text-2xl font-semibold mb-6">Create Classified</h2>
           
+          {/* Description */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Description
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-lg"
+              rows="3"
+            ></textarea>
+          </div>
+
           {/* Basic Information */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
@@ -122,7 +159,6 @@ const ClassifiedForm = () => {
                 value={formData.name}
                 onChange={handleChange}
                 className="w-full p-2 border rounded-lg"
-                required
               />
             </div>
             
@@ -136,7 +172,6 @@ const ClassifiedForm = () => {
                 value={formData.email}
                 onChange={handleChange}
                 className="w-full p-2 border rounded-lg"
-                required
               />
             </div>
 
@@ -150,7 +185,6 @@ const ClassifiedForm = () => {
                 value={formData.mobile_number}
                 onChange={handleChange}
                 className="w-full p-2 border rounded-lg"
-                required
               />
             </div>
 
@@ -186,15 +220,16 @@ const ClassifiedForm = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Height (in cm)
+                Height (in feet)
               </label>
               <input
                 type="number"
-                step="0.01"
+                step="0.1"
                 name="height"
                 value={formData.height}
                 onChange={handleChange}
                 className="w-full p-2 border rounded-lg"
+                placeholder="5.8"
               />
             </div>
           </div>
@@ -202,7 +237,7 @@ const ClassifiedForm = () => {
           {/* Location Information */}
           <div className="border-t pt-6 mb-6">
             <h3 className="text-xl font-medium mb-4">Location Details</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   State
@@ -235,6 +270,34 @@ const ClassifiedForm = () => {
                   type="text"
                   name="location.city"
                   value={formData.location.city}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-lg"
+                />
+              </div>
+            </div>
+
+            <h4 className="text-lg font-medium mb-4">Job Location</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  State
+                </label>
+                <input
+                  type="text"
+                  name="job_location.state"
+                  value={formData.job_location.state}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  City
+                </label>
+                <input
+                  type="text"
+                  name="job_location.city"
+                  value={formData.job_location.city}
                   onChange={handleChange}
                   className="w-full p-2 border rounded-lg"
                 />
@@ -283,9 +346,9 @@ const ClassifiedForm = () => {
                   className="w-full p-2 border rounded-lg"
                 >
                   <option value="">Select Type</option>
-                  <option value="Govt">Government</option>
-                  <option value="Pvt">Private</option>
-                  <option value="Buss">Business</option>
+                  <option value="Government">Government</option>
+                  <option value="Private">Private</option>
+                  <option value="Business">Business</option>
                 </select>
               </div>
 
@@ -312,6 +375,7 @@ const ClassifiedForm = () => {
                   value={formData.income}
                   onChange={handleChange}
                   className="w-full p-2 border rounded-lg"
+                  placeholder="e.g., Not Disclosed"
                 />
               </div>
             </div>
@@ -349,23 +413,6 @@ const ClassifiedForm = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Marital Status
-                </label>
-                <select
-                  name="marital_status"
-                  value={formData.marital_status}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-lg"
-                >
-                  <option value="Single">Single</option>
-                  <option value="Married">Married</option>
-                  <option value="Divorced">Divorced</option>
-                  <option value="Widowed">Widowed</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Family Members
                 </label>
                 <input
@@ -392,111 +439,53 @@ const ClassifiedForm = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Zodiac Sign
+                  Personality Type
                 </label>
                 <input
                   type="text"
-                  name="zodiac"
-                  value={formData.zodiac}
+                  name="personality_type"
+                  value={formData.personality_type}
                   onChange={handleChange}
                   className="w-full p-2 border rounded-lg"
+                  placeholder="e.g., Introvert, Extrovert"
                 />
               </div>
             </div>
           </div>
 
-          {/* Lifestyle Information */}
-          <div className="border-t pt-6 mb-6">
-            <h3 className="text-xl font-medium mb-4">Lifestyle</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Drinking Habits
-                </label>
-                <select
-                  name="drinking_habits"
-                  value={formData.drinking_habits}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-lg"
-                >
-                  <option value="">Select Option</option>
-                  <option value="Never">Never</option>
-                  <option value="Occasionally">Occasionally</option>
-                  <option value="Regularly">Regularly</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Diet
-                </label>
-                <select
-                  name="diet"
-                  value={formData.diet}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-lg"
-                >
-                  <option value="">Select Diet</option>
-                  <option value="Vegetarian">Vegetarian</option>
-                  <option value="Non-Vegetarian">Non-Vegetarian</option>
-                  <option value="Vegan">Vegan</option>
-                </select>
-              </div>
-
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="smoking"
-                  checked={formData.smoking}
-                  onChange={handleChange}
-                  className="h-4 w-4 text-blue-600"
-                />
-                <label className="ml-2 text-sm font-medium text-gray-700">
-                  Smoking
-                </label>
-              </div>
-            </div>
-          </div>
-
-          {/* Additional Information */}
+          {/* Bio */}
           <div className="border-t pt-6">
-            <h3 className="text-xl font-medium mb-4">Additional Information</h3>
-            <div className="grid grid-cols-1 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Bio
-                </label>
-                <textarea
-                  name="bio"
-                  value={formData.bio}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-lg"
-                  rows="4"
-                ></textarea>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Places Interested (comma-separated)
-                </label>
-                <input
-                  type="text"
-                  value={formData.places_interested.join(", ")}
-                  onChange={(e) => handleArrayChange("places_interested", e.target.value)}
-                  className="w-full p-2 border rounded-lg"
-                  placeholder="Mountains, Beaches, etc."
-                />
-              </div>
-              </div>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Bio
+              </label>
+              <textarea
+                name="bio"
+                value={formData.bio}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-lg"
+                rows="4"
+              ></textarea>
             </div>
-            <button onClick={handleSubmit} className="w-full hover:bg-gray-700 bg-black px-3 py-2 rounded-xl text-white mt-4 font-medium">
-            Create
-          </button>
           </div>
 
+          {creating ? ( <button
+            className="w-full bg-gray-300 cursor-wait text-black font-medium py-2 px-4 rounded-xl"
+          >
+            Creating...
+          </button>): (
+            <button
+            onClick={handleSubmit}
+            className="w-full bg-black hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-xl"
+          >
+            Create Classified
+          </button>)}
 
+
+        </div>
       </form>
-    </div>);
-}
+    </div>
+  );
+};
 
 export default ClassifiedForm;

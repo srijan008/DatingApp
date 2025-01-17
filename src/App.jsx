@@ -5,9 +5,7 @@ import UsersPanel from "./pages/Admin/Userspanel";
 import UserInfo from "./pages/Admin/Userinfo";
 import ClassifiedForm from "./pages/Admin/ClassifiedForm";
 import Chart1 from "./pages/Admin/Insights";
-import Advertisements from "./pages/Admin/Advertisements";
-import MatchTable from "./pages/Admin/Matches";
-import SwipeDetails from "./pages/Admin/SwipeDetails";
+import Advertisements, { AdsDataProvider } from "./pages/Admin/Advertisements";
 import EditForm from "./pages/Admin/UpdateAds";
 import CreateUserForm from "./pages/Admin/CreateUser";
 import LoginForm from "./pages/Admin/Login";
@@ -20,6 +18,8 @@ import SubusersPanel from "./pages/Admin/Subusers";
 import { SubusersInfo } from "./pages/Admin/SubUserDetails";
 import SuperAdminDashboard from "./pages/Admin/SuperAdminProfile";
 import AdminDetails from "./pages/Admin/AdmindetailsPage";
+import MatchesPage from "./pages/Admin/Matches";
+import PendingPage from "./pages/Admin/Pending";
 function AdminLayout({ children }) {
   return (
     <div className="flex">
@@ -52,6 +52,7 @@ function Paging() {
   }, [token]);
 
   return (
+    
     <Router>
       <Routes>
         {/* Public Routes */}
@@ -77,8 +78,8 @@ function Paging() {
                   <Route path="charts" element={<Chart1 />} />
                   <Route path="admincomments" element={<AdminComments/>} />
                   <Route path="advertisements" element={<Advertisements />} />
-                  <Route path="matchtable/:id" element={<MatchTable />} />
-                  <Route path="swipedetails/:id" element={<SwipeDetails />} />
+                  <Route path="matchtable/:id" element={<MatchesPage />} />
+                  <Route path="pendingtable/:id" element={<PendingPage />} />
                   <Route path="editform/:id" element={<EditForm />} />
                   <Route path="userinfo/subusers/:id" element={<SubusersPanel />} />
                   <Route path="userinfo/subusers/:id/:suid" element={<SubusersInfo />} />
@@ -98,9 +99,11 @@ function Paging() {
 
 const App = () => {
   return (
+    <AdsDataProvider>
     <RecoilRoot>
       <Paging />
     </RecoilRoot>
+    </AdsDataProvider>
   );
 };
 
