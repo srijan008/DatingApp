@@ -20,6 +20,10 @@ import SuperAdminDashboard from "./pages/Admin/SuperAdminProfile";
 import AdminDetails from "./pages/Admin/AdmindetailsPage";
 import MatchesPage from "./pages/Admin/Matches";
 import PendingPage from "./pages/Admin/Pending";
+import Footer from "./components/Home/Footer";
+import Privacypolicy from "./pages/Home/Privacypolicy";
+import FraudAlert from "./pages/Home/FraudAlert";
+import TermsAndCondition  from "./pages/Home/TermsAndCondition";
 function AdminLayout({ children }) {
   return (
     <div className="flex">
@@ -40,6 +44,15 @@ function AdminLayout({ children }) {
   );
 }
 
+function HomeLayout({ children }) {
+  return (
+    <div>
+      {children}
+      <Footer/>
+    </div>
+  );
+}
+
 function Paging() {
   const [Login, setLogin] = useState(false);
   const token = window.sessionStorage.getItem('token');
@@ -56,7 +69,20 @@ function Paging() {
     <Router>
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<HomePage />} />
+        <Route
+          path="/*"
+          element={
+              <HomeLayout>
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/privacy-policy" element={<Privacypolicy />} />
+                  <Route path="/fraud-alert" element={<FraudAlert />} />
+                  <Route path="/terms-and-conditions" element={<TermsAndCondition />} />
+                </Routes>
+              </HomeLayout>
+            
+          }
+        />
         
         {/* Conditional Login Route */}
         {Login ? (

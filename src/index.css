@@ -19,7 +19,7 @@ body {
     height: 100vh;
     z-index: -1; 
     pointer-events: none; 
-    background-image: url('https://img.freepik.com/free-vector/winter-blue-pink-gradient-background-vector_53876-117276.jpg');
+    /* background-image: url('https://img.freepik.com/free-vector/winter-blue-pink-gradient-background-vector_53876-117276.jpg'); */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -30,7 +30,7 @@ body {
     position: relative;
     overflow-y: auto; 
     height: 100vh; 
-    background-image: url('./assets/pattern-randomized.svg'); 
+    /* background-image: url('./assets/pattern-randomized.svg');  */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -98,4 +98,19 @@ body {
   100% {
     transform: translateY(0); /* Move down to original position */
   }
+}
+
+/* For WebKit-based browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* For Firefox */
+html {
+  scrollbar-width: none;
+}
+
+/* For Internet Explorer and Edge */
+body {
+  -ms-overflow-style: none;
 }
