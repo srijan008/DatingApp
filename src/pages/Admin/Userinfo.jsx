@@ -3,12 +3,14 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FallingLines } from 'react-loader-spinner';
 import { toast } from 'react-hot-toast';
+import { useRecoilState } from 'recoil';
+import userAtom from '../../atoms/useratom';
 
 const UserInfo = () => {
   const [moreDetails, setMoreDetails] = useState(false);
   const [editStatusMenu, setEditStatusMenu] = useState(false);
   const navigate = useNavigate();
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useRecoilState(userAtom);
   const [userDetails, setUserDetails] = useState({
     pending: 0,
     matches: 0,
@@ -30,7 +32,7 @@ const UserInfo = () => {
         });
         
         // Log the response to debug
-        console.log('API Response:', response.data);
+        // console.log('API Responsee:', response.data);
         
         // Check for both "message" and "messsgae" due to the typo in API
         if (response.data.message === "data fetched successfully" || 
@@ -57,15 +59,20 @@ const UserInfo = () => {
     const fetchUsers = async () => {
       const token = window.sessionStorage.getItem("token");
       try {
-        const response = await axios.get('http://13.235.72.216/auth/get-unverified-users', {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const response = await axios.get(
+          "http://13.235.72.216/auth/get-all-user-for-admin",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
         if (response.data) {
-          setUsers(response.data);
+          setUsers(response.data.users);
           setLoading(false);
         }
+        // console.log("addfad", response.data.users);
+
       } catch (error) {
         console.error('Error fetching users:', error);
         toast.error('Failed to fetch users');
