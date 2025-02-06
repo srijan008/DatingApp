@@ -6,6 +6,7 @@ import { useRecoilState } from "recoil";
 import userAtom from "../../atoms/useratom";
 import { Blocks } from "react-loader-spinner";
 import { Search } from "lucide-react";
+import Loader from "../../components/Loader/Loader";
 
 const UserTable = () => {
   const [users, setUsers] = useRecoilState(userAtom);
@@ -93,14 +94,9 @@ const UserTable = () => {
 
       {loading ? (
         <div className="flex justify-center items-center h-full">
-          <Blocks
-            height="80"
-            width="80"
-            ariaLabel="blocks-loading"
-            wrapperClass="blocks-wrapper"
-            visible={true}
-          />
+          <Loader />
         </div>
+
       ) : (
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

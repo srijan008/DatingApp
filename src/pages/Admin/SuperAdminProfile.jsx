@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Search, Users } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Puff } from "react-loader-spinner";
+import Loader from "../../components/Loader/Loader";
 
 const SuperAdminDashboard = () => {
   const [admins, setAdmins] = useState([]);
@@ -97,7 +98,7 @@ const SuperAdminDashboard = () => {
 
           {loading ? (
             <div className="flex justify-center py-8">
-              <Puff className="h-8 w-8 text-orange-500 animate-spin" />
+              <Loader />
             </div>
           ) : filteredAdmins.length > 0 ? (
             <div className="space-y-4">

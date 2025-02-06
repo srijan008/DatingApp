@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import Loader from '../../components/Loader/Loader';
 
 const UpdateForm = () => {
   const [selectedFields, setSelectedFields] = useState({});
@@ -149,7 +150,7 @@ const UpdateForm = () => {
   };
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return <div className='flex justify-center items-center h-screen'><Loader /></div>;
   }
 
   const renderField = (fieldName, label, type = "text") => {

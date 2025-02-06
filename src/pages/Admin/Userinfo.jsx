@@ -5,6 +5,7 @@ import { FallingLines } from 'react-loader-spinner';
 import { toast } from 'react-hot-toast';
 import { useRecoilState } from 'recoil';
 import userAtom from '../../atoms/useratom';
+import Loader from '../../components/Loader/Loader';
 
 const UserInfo = () => {
   const [moreDetails, setMoreDetails] = useState(false);
@@ -117,9 +118,10 @@ const UserInfo = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg flex flex-col items-center justify-center p-4">
-        <FallingLines color="red" width="100" visible={true} />
+        <Loader />
         <h1 className="text-4xl font-mono font-bold mt-4">Loading...</h1>
       </div>
+
     );
   }
 

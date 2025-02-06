@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { FallingLines } from 'react-loader-spinner';
+import Loader from "../../components/Loader/Loader";
 
 const PendingPage = () => {
     const { id } = useParams();
@@ -73,9 +74,10 @@ const PendingPage = () => {
     if (loading) {
         return (
             <div className="min-h-screen rounded-lg flex flex-col items-center justify-center bg-gray-50/50">
-                <FallingLines color="#4F46E5" width="100" visible={true} />
+                <Loader />
                 <div className="text-2xl font-semibold text-gray-700 mt-4">Loading Pending...</div>
             </div>
+
         );
     }
 

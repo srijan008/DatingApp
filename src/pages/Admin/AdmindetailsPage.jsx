@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Users } from "lucide-react";
 import axios from "axios";
+import Loader from "../../components/Loader/Loader";
 
 const AdminDetails = () => {
   const { id } = useParams();
@@ -117,8 +118,9 @@ const LinkedUsersPage = ({ id }) => {
   if (loading) {
     return (
       <div className="p-6 text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+        <Loader />
       </div>
+
     );
   }
 

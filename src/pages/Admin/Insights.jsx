@@ -7,6 +7,7 @@ import ChartComponent from '../../components/DashbboardCharts';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import { ThreeCircles } from 'react-loader-spinner';
+import Loader from '../../components/Loader/Loader';
 // import {data} from '../../components/DashbboardCharts';
 
 const data = {
@@ -129,6 +130,7 @@ const InsightsDashboard = () => {
         });
 
         if (response.data) {
+          console.log(response.data);
           setData(response.data);
           toast.success("Data fetched successfully!");
         } else {
@@ -151,15 +153,8 @@ const InsightsDashboard = () => {
   if (isLoading) {
     return <div className="flex justify-center items-center bg-gray-100/70 h-[90vh] w-full">
       <div className='flex flex-col justify-center items-center'>
-      <ThreeCircles
-        visible={true}
-        height="100"
-        width="100"
-        color="blue"
-        ariaLabel="three-circles-loading"
-        wrapperStyle={{}}
-        wrapperClass=""
-        />
+      <Loader />
+
 
       <div className='flex justify-center items-center'>
         <div className="text-4xl font-base font-mono m-10">Loading...</div>

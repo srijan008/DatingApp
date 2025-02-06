@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { Blocks, ProgressBar } from "react-loader-spinner";
+import Loader from "../../components/Loader/Loader";
 
 // Table for displaying all subusers of a user
 const SubusersTable = () => {
@@ -52,15 +53,7 @@ const SubusersTable = () => {
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg p-4">
             <h2 className="text-3xl font-bold mb-4">Subusers of User {id}</h2>
             <div className="flex justify-center">
-                {loading ? ( <Blocks
-                height="80"
-                width="80"
-                color="#4fa94d"
-                ariaLabel="blocks-loading"
-                wrapperStyle={{}}
-                wrapperClass="blocks-wrapper"
-                visible={true}
-                />):(
+                {loading ? ( <Loader/>):(
                     <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>

@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { Comment } from 'react-loader-spinner'
 import axios from 'axios';
 import { Search } from 'lucide-react';
+import Loader from '../../components/Loader/Loader';
 
 export const AdsDataContext = createContext();
 
@@ -92,18 +93,10 @@ const Advertisements = () => {
             />
           </div>
       {loading ? ( <div className='flex justify-center'>
-        <Comment
-          visible={true}
-          height="80"
-          width="80"
-          ariaLabel="comment-loading"
-          wrapperStyle={{}}
-          wrapperClass="comment-wrapper"
-          color="#fff"
-          backgroundColor="#F4442E"
-          />
+        <Loader />
       </div>) : " "}
      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 rounded-xl">
         {filteredAds.map((ad) => (
           <div key={ad.cls_id} className="bg-white rounded-lg shadow-md p-4">
