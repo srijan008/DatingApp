@@ -3,6 +3,7 @@ import { Chart } from "react-google-charts";
 import MatchesChart from '../../components/MatchRatiosChart';
 import ReferredUsersChart from '../../components/refferedUserChart';
 import UserStatsPieChart from '../../components/ActiveUserChart';
+import VerifiedUserStats from '../../components/VerifedUserStats.jsx'
 import ChartComponent from '../../components/DashbboardCharts';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
@@ -215,6 +216,22 @@ const InsightsDashboard = () => {
             marginBottom: '15px'
           }}>Active Users Ratio</h2>
           <UserStatsPieChart/>
+        </div>
+        {/* Verifed vs Unverified ratio */}
+
+        <div style={{
+          backgroundColor: '#ffffff',
+          borderRadius: '8px',
+          padding: '20px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        }}>
+          <h2 style={{
+            fontSize: '18px',
+            fontWeight: 'bold',
+            color: '#333',
+            marginBottom: '15px'
+          }}>Verified User Status</h2>
+          <VerifiedUserStats data={{data}}/>
         </div>
 
         {/* Profile Completion Card */}
